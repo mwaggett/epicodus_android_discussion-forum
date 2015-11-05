@@ -3,8 +3,6 @@ package com.epicodus.discussionforum.ui;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,7 +10,9 @@ import android.widget.EditText;
 import com.epicodus.discussionforum.R;
 
 import butterknife.Bind;
-import models.Message;
+import butterknife.ButterKnife;
+
+import com.epicodus.discussionforum.models.Message;
 
 public class NewMessageActivity extends AppCompatActivity {
 
@@ -23,11 +23,12 @@ public class NewMessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_message);
+        ButterKnife.bind(this);
 
-        final String messageContent = mNewMessageText.getText().toString();
         mSubmitMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String messageContent = mNewMessageText.getText().toString();
                 Message newMessage = new Message(messageContent);
 
                 Intent intent = new Intent(NewMessageActivity.this, MainActivity.class);

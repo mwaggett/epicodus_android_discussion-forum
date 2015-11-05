@@ -11,7 +11,7 @@ import com.epicodus.discussionforum.R;
 
 import java.util.ArrayList;
 
-import models.Message;
+import com.epicodus.discussionforum.models.Message;
 
 public class MessageAdapter extends BaseAdapter {
     private Context mContext;

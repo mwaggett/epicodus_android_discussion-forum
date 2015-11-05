@@ -2,27 +2,19 @@ package com.epicodus.discussionforum.ui;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.epicodus.discussionforum.R;
 import com.epicodus.discussionforum.adapters.MessageAdapter;
-import com.parse.ParseAnalytics;
-import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
 import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import models.Message;
+import com.epicodus.discussionforum.models.Message;
 
 public class MainActivity extends ListActivity {
 
@@ -39,15 +31,14 @@ public class MainActivity extends ListActivity {
         ButterKnife.bind(this);
 
         if (ParseUser.getCurrentUser() != null) {
-            Message testMessage = new Message("test message");
             Message.all(new Runnable() {
                 @Override
                 public void run() {
                     mMessages = (ArrayList<Message>) Message.getAllMessages();
+                    mAdapter = new MessageAdapter(MainActivity.this, mMessages);
+                    setListAdapter(mAdapter);
                 }
             });
-            mAdapter = new MessageAdapter(this, mMessages);
-            setListAdapter(mAdapter);
         } else {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);

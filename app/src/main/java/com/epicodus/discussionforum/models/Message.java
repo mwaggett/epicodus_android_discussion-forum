@@ -1,9 +1,6 @@
-package models;
-
-import android.app.AlertDialog;
+package com.epicodus.discussionforum.models;
 
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -86,6 +83,7 @@ public class Message {
     }
 
     public static void all(final Runnable runnable) {
+        mAllMessages = new ArrayList<Message>();
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
