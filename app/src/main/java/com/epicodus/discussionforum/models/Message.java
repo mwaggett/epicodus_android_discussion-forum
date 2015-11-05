@@ -18,6 +18,7 @@ public class Message {
     private String mContent;
     private ParseUser mAuthor;
     private Date mCreatedAt;
+    private ParseObject mParseObject;
     private static List<Message> mAllMessages;
 
     public Message(ParseObject message) {
@@ -25,21 +26,22 @@ public class Message {
         mContent = message.getString("content");
         mAuthor = message.getParseUser("author");
         mCreatedAt = message.getCreatedAt();
+        mParseObject = message;
     }
 
     public Message(String content) {
         mContent = content;
         mAuthor = ParseUser.getCurrentUser();
 
-        final ParseObject newMessage = new ParseObject("Message");
-        newMessage.put("content", mContent);
-        newMessage.put("author", mAuthor);
-        newMessage.saveInBackground(new SaveCallback() {
+        mParseObject = new ParseObject("Message");
+        mParseObject.put("content", mContent);
+        mParseObject.put("author", mAuthor);
+        mParseObject.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    mId = newMessage.getObjectId();
-                    mCreatedAt = newMessage.getCreatedAt();
+                    mId = mParseObject.getObjectId();
+                    mCreatedAt = mParseObject.getCreatedAt();
                 }
             }
         });
@@ -80,6 +82,10 @@ public class Message {
     public String getFormattedCreatedAt() {
         SimpleDateFormat formatter = new SimpleDateFormat("MMMM d, yyyy 'at' h:mm a");
         return formatter.format(mCreatedAt);
+    }
+
+    public ParseObject getParseObject() {
+        return mParseObject;
     }
 
     public static void all(final Runnable runnable) {

@@ -12,6 +12,10 @@ import com.epicodus.discussionforum.R;
 import java.util.ArrayList;
 
 import com.epicodus.discussionforum.models.Message;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 public class MessageAdapter extends BaseAdapter {
     private Context mContext;
@@ -41,7 +45,7 @@ public class MessageAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+        final ViewHolder holder;
 
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.message_view, null);
@@ -56,10 +60,16 @@ public class MessageAdapter extends BaseAdapter {
         }
 
         final Message message = mMessages.get(position);
-
-        holder.mMessageLabel.setText(message.getContent());
-        holder.mUserLabel.setText(message.getAuthor().getUsername());
-        holder.mCreatedAtLabel.setText(message.getFormattedCreatedAt());
+        message.getParseObject().getParseUser("author")
+                .fetchIfNeededInBackground(new GetCallback<ParseUser>() {
+                    @Override
+                    public void done(ParseUser author, ParseException e) {
+                        message.setAuthor(author);
+                        holder.mMessageLabel.setText(message.getContent());
+                        holder.mUserLabel.setText(message.getAuthor().getUsername());
+                        holder.mCreatedAtLabel.setText(message.getFormattedCreatedAt());
+                    }
+                });
 
         return convertView;
     }
