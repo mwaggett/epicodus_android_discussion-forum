@@ -38,30 +38,19 @@ public class MainActivity extends ListActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mUser = new ParseUser();
-        mUser.setUsername("test-user");
-        mUser.setPassword("secret_password");
-        mUser.setEmail("user@example.com");
-        mUser.signUpInBackground(new SignUpCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Toast.makeText(MainActivity.this, "hey " + mUser.getUsername(), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "ERROR", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
         if (ParseUser.getCurrentUser() != null) {
             Message testMessage = new Message("test message");
-            mMessages = (ArrayList<Message>) Message.all();
+            Message.all(new Runnable() {
+                @Override
+                public void run() {
+                    mMessages = (ArrayList<Message>) Message.getAllMessages();
+                }
+            });
             mAdapter = new MessageAdapter(this, mMessages);
             setListAdapter(mAdapter);
         } else {
-//            Intent intent = new Intent(this, LoginActivity.class);
-//            startActivity(intent);
-            Toast.makeText(MainActivity.this, "No one is logged in.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
         }
 
         mNewMessageButton.setOnClickListener(new View.OnClickListener() {

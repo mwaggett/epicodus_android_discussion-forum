@@ -21,7 +21,14 @@ public class Message {
     private String mContent;
     private ParseUser mAuthor;
     private Date mCreatedAt;
-    private static ArrayList<Message> mAllMessages;
+    private static List<Message> mAllMessages;
+
+    public Message(ParseObject message) {
+        mId = message.getObjectId();
+        mContent = message.getString("content");
+        mAuthor = message.getParseUser("author");
+        mCreatedAt = message.getCreatedAt();
+    }
 
     public Message(String content) {
         mContent = content;
@@ -78,16 +85,23 @@ public class Message {
         return formatter.format(mCreatedAt);
     }
 
-    public static List<Message> all() {
+    public static void all(final Runnable runnable) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null) {
-                    mAllMessages = (ArrayList) objects;
+                    for (ParseObject object : objects) {
+                        Message newMessage = new Message(object);
+                        mAllMessages.add(newMessage);
+                    }
+                    runnable.run();
                 }
             }
         });
+    }
+
+    public static List<Message> getAllMessages() {
         return mAllMessages;
     }
 }
