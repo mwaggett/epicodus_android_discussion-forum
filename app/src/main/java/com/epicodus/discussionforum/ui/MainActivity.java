@@ -23,6 +23,7 @@ public class MainActivity extends ListActivity {
     private MessageAdapter mAdapter;
 
     @Bind(R.id.newMessageButton) Button mNewMessageButton;
+    @Bind(R.id.logoutButton) Button mLogoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,9 @@ public class MainActivity extends ListActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        if (ParseUser.getCurrentUser() != null) {
+        mUser = ParseUser.getCurrentUser();
+
+        if (mUser != null) {
             Message.all(new Runnable() {
                 @Override
                 public void run() {
@@ -48,6 +51,17 @@ public class MainActivity extends ListActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, NewMessageActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mLogoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mUser.logOut();
+                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
         });
