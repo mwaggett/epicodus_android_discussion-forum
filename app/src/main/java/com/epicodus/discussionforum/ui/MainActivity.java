@@ -24,6 +24,7 @@ public class MainActivity extends ListActivity {
 
     @Bind(R.id.newMessageButton) Button mNewMessageButton;
     @Bind(R.id.logoutButton) Button mLogoutButton;
+    @Bind(R.id.loginButton) Button mLoginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,25 +33,37 @@ public class MainActivity extends ListActivity {
         ButterKnife.bind(this);
 
         mUser = ParseUser.getCurrentUser();
-
-        if (mUser != null) {
-            Message.all(new Runnable() {
-                @Override
-                public void run() {
-                    mMessages = (ArrayList<Message>) Message.getAllMessages();
-                    mAdapter = new MessageAdapter(MainActivity.this, mMessages);
-                    setListAdapter(mAdapter);
-                }
-            });
-        } else {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
+        if (mUser == null) {
+            mLogoutButton.setVisibility(View.INVISIBLE);
+            mLoginButton.setVisibility(View.VISIBLE);
         }
+
+        Message.all(new Runnable() {
+            @Override
+            public void run() {
+                mMessages = (ArrayList<Message>) Message.getAllMessages();
+                mAdapter = new MessageAdapter(MainActivity.this, mMessages);
+                setListAdapter(mAdapter);
+            }
+        });
 
         mNewMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, NewMessageActivity.class);
+                if (mUser != null) {
+                    Intent intent = new Intent(MainActivity.this, NewMessageActivity.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });
